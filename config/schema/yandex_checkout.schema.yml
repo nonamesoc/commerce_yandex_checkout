@@ -1,9 +1,23 @@
-yandex_checkout.plugin.yandex_checkout-gateway:
+commerce_payment.commerce_payment_gateway.plugin.yandex_checkout:
   type: commerce_payment_gateway_configuration
   mapping:
     shop_id:
-      type: string
+      type: integer
       label: 'shopId'
     secret_key:
       type: string
       label: 'Secret key'
+    description_template:
+      type: string
+      label: 'Payment description'
+    receipt_enabled:
+      type: boolean
+      label: 'Enable receipt'
+    default_tax:
+      type: integer
+      label: 'Default tax'
+    yandex_checkout_tax:
+      type: sequence
+      label: 'Yandex checkout tax'
+      sequence:
+        type: string
