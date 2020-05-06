@@ -45,7 +45,22 @@ class PaymentGatewayConfigSchemaTest extends KernelTestBase {
   }
 
   /**
-   * Tests whether the payment gateway schema is valid.
+   * Validate payment gateway config schema.
+   *
+   * @param array $configuration
+   *   Payment gateway configuration.
+   */
+  protected function validatePaymentGatewayConfigSchema(array $configuration) {
+    $gateway = $this->paymentGatewayStorage->create($configuration);
+    $gateway->save();
+
+    $config = $this->config('commerce_payment.commerce_payment_gateway.' . $gateway->id());
+    $this->assertEqual($config->get('id'), $gateway->id());
+    $this->assertConfigSchema($this->typedConfig, $config->getName(), $config->get());
+  }
+
+  /**
+   * Tests whether the yandex_checkout payment gateway schema is valid.
    */
   public function testValidYandexCheckoutConfigSchema() {
     $gateway_configuration = [
@@ -63,12 +78,23 @@ class PaymentGatewayConfigSchemaTest extends KernelTestBase {
       ],
     ];
 
-    $gateway = $this->paymentGatewayStorage->create($gateway_configuration);
-    $gateway->save();
+    $this->validatePaymentGatewayConfigSchema($gateway_configuration);
+  }
 
-    $config = $this->config('commerce_payment.commerce_payment_gateway.' . $gateway->id());
-    $this->assertEqual($config->get('id'), $gateway->id());
-    $this->assertConfigSchema($this->typedConfig, $config->getName(), $config->get());
+  /**
+   * Tests whether the yandex_checkout_billing payment gateway schema is valid.
+   */
+  public function testValidYandexCheckoutBillingConfigSchema() {
+    $gateway_configuration = [
+      'id' => $this->getRandomGenerator()->name(),
+      'label' => $this->getRandomGenerator()->name(),
+      'plugin' => 'yandex_checkout_billing',
+      'billing_id' => 716412,
+      'secret_key' => 'test_3iEwkXIv5RmV8quKUPadlMIK8oSomIbA6hiU23mSxwU',
+      'display_label' => $this->getRandomGenerator()->name(),
+    ];
+
+    $this->validatePaymentGatewayConfigSchema($gateway_configuration);
   }
 
 }
