@@ -4,6 +4,7 @@ namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
 
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Plugin\Field\FieldType\AdjustmentItemList;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
@@ -15,6 +16,7 @@ use Drupal\user\UserInterface;
 use Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout;
 use YandexCheckout\Client;
 use YandexCheckout\Model\ConfirmationType;
+use YandexCheckout\Model\Payment as PaymentModel;
 use YandexCheckout\Request\Payments\CreatePaymentRequest;
 
 class PaymentOffsiteForm extends BasePaymentOffsiteForm
@@ -157,7 +159,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
 
         $description = strtr($descriptionTemplate, $replace);
 
-        return (string)mb_substr($description, 0, Payment::MAX_LENGTH_DESCRIPTION);
+        return (string)mb_substr($description, 0, PaymentModel::MAX_LENGTH_DESCRIPTION);
     }
 
 }
