@@ -86,7 +86,6 @@ class YandexCheckout extends OffsitePaymentGatewayBase
                    'receipt_enabled'     => '',
                    'default_tax'         => '',
                    'yandex_checkout_tax' => array(),
-                   'notification_url'    => '',
                ] + parent::defaultConfiguration();
     }
 
@@ -224,12 +223,18 @@ class YandexCheckout extends OffsitePaymentGatewayBase
                 }
             }
         }
-        $this->entityId = $form_state->getValue('id');
-        if ($this->entityId) {
+
+        // @todo: temp solution.
+        // @see: https://www.drupal.org/project/commerce/issues/3017551
+        $gateway_id = $form_state->getValue('id', NULL);
+        $gateway = $gateway_id ?
+            $this->entityTypeManager->getStorage('commerce_payment_gateway')->load($gateway_id)
+            : NULL;
+        if ($gateway) {
             $form['notification_url'] = [
                 '#type'          => 'textfield',
                 '#title'         => t('Url для нотификаций'),
-                '#default_value' => $this->getNotifyUrl()->toString(),
+                '#default_value' => $gateway->getPlugin()->getNotifyUrl()->toString(),
                 '#attributes'    => ['readonly' => 'readonly'],
             ];
         }
@@ -268,7 +273,7 @@ class YandexCheckout extends OffsitePaymentGatewayBase
             $this->configuration['description_template'] = $values['description_template'];
             $this->configuration['receipt_enabled']     = $values['receipt_enabled'];
             $this->configuration['default_tax']         = isset($values['default_tax']) ? $values['default_tax'] : '';
-            $this->configuration['yandex_checkout_tax'] = isset($values['yandex_checkout_tax']) ? $values['yandex_checkout_tax'] : '';
+            $this->configuration['yandex_checkout_tax'] = isset($values['yandex_checkout_tax']) ? $values['yandex_checkout_tax'] : [];
         }
     }
 
