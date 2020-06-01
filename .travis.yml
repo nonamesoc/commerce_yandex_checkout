@@ -53,6 +53,7 @@ install:
 
   # Bring in the module dependencies without requiring a merge plugin. The
   # require also triggers a full 'composer install'.
+  - composer --working-dir=$DRUPAL_BUILD_DIR require drupal/commerce:^2.14
   - composer --working-dir=$DRUPAL_BUILD_DIR require yandex-money/yandex-checkout-sdk-php:^1.5
 
   # For Drupal < 8.8 we have to manually upgrade zend-stdlib to avoid PHP 7.3
