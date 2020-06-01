@@ -1,0 +1,71 @@
+language: php
+sudo: false
+
+php:
+  - 7.3
+  - 7.2
+  - 7.1
+
+services:
+  - mysql
+
+env:
+  global:
+    - DRUPAL_BUILD_DIR=$TRAVIS_BUILD_DIR/../drupal
+    - SIMPLETEST_DB=mysql://root:@127.0.0.1/drupal
+    - PATH="$PATH:$HOME/.composer/vendor/bin"
+  matrix:
+    - DRUPAL_CORE=8.6.x
+    - DRUPAL_CORE=8.7.x
+    - DRUPAL_CORE=8.8.x
+
+matrix:
+  fast_finish: true
+
+mysql:
+  database: drupal
+  username: root
+  encoding: utf8
+
+# Cache composer downloads.
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  # Disable xdebug.
+  - phpenv config-rm xdebug.ini
+  # Update composer.
+  - composer self-update
+
+  - composer global require "hirak/prestissimo:^0.3"
+  - composer global require "drupal/coder:8.3.*"
+
+install:
+  # Create the database.
+  - mysql -e 'create database drupal'
+
+  # Download Drupal 8 core from the Github mirror because it is faster.
+  - git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git $DRUPAL_BUILD_DIR
+
+  # Reference the module in the build site.
+  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout
+
+  # Bring in the module dependencies without requiring a merge plugin. The
+  # require also triggers a full 'composer install'.
+  - composer --working-dir=$DRUPAL_BUILD_DIR require yandex-money/yandex-checkout-sdk-php:^1.5
+
+  # For Drupal < 8.8 we have to manually upgrade zend-stdlib to avoid PHP 7.3
+  # incompatibilities.
+  - if [[ "$DRUPAL_CORE" = "8.6.x" || "$DRUPAL_CORE" = "8.7.x" ]];
+      then composer --working-dir=$DRUPAL_BUILD_DIR require zendframework/zend-stdlib:3.2.1;
+    fi
+
+  # For Drupal < 8.8 we have to manually upgrade phpunit to avoid PHP 7.3
+  # incompatibilities.
+  - if [[ "$DRUPAL_CORE" = "8.6.x" || "$DRUPAL_CORE" = "8.7.x" ]];
+      then composer --working-dir=$DRUPAL_BUILD_DIR run-script drupal-phpunit-upgrade;
+    fi
+
+script:
+  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
