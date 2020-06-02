@@ -21,9 +21,9 @@ env:
     - SIMPLETEST_DB=mysql://root:@127.0.0.1/drupal
     - PATH="$PATH:$HOME/.composer/vendor/bin"
   matrix:
-    - DRUPAL_CORE=8.6.x
+#    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
-#    - DRUPAL_CORE=8.8.x
+    - DRUPAL_CORE=8.8.x
 
 matrix:
   fast_finish: true
