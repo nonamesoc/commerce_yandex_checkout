@@ -2,8 +2,8 @@ language: php
 sudo: false
 
 php:
-  - 7.3
-  - 7.2
+#  - 7.3
+#  - 7.2
   - 7.1
 
 addons:
@@ -22,8 +22,8 @@ env:
     - PATH="$PATH:$HOME/.composer/vendor/bin"
   matrix:
     - DRUPAL_CORE=8.6.x
-    - DRUPAL_CORE=8.7.x
-    - DRUPAL_CORE=8.8.x
+#    - DRUPAL_CORE=8.7.x
+#    - DRUPAL_CORE=8.8.x
 
 matrix:
   fast_finish: true
@@ -57,6 +57,10 @@ install:
   # Reference the module in the build site.
   - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout
 
+  # Copy the customized phpunit configuration file to the core directory so
+  # the relative paths are correct.
+  - cp $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout/phpunit.xml.dist $DRUPAL_BUILD_DIR/core/phpunit.xml
+
   # Bring in the module dependencies without requiring a merge plugin. The
   # require also triggers a full 'composer install'.
   - composer --working-dir=$DRUPAL_BUILD_DIR require drupal/commerce:^2.14
@@ -85,7 +89,7 @@ before_script:
   # include ChromeDriver in PATH
   - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
   # start Chrome and listen on localhost
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9515 http://localhost &
 
 script:
-  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
+  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist $TRAVIS_BUILD_DIR

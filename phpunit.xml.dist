@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="tests/bootstrap.php" colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         checkForUnintentionallyCoveredCode="false"
+         verbose="true">
+  <php>
+    <ini name="error_reporting" value="32767"/>
+    <ini name="memory_limit" value="-1"/>
+    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://localhost:9515"]'/>
+  </php>
+  <filter>
+    <whitelist>
+      <directory suffix=".php">../modules/commerce_yandex_checkout</directory>
+      <exclude>
+        <directory suffix="Test.php">../modules/commerce_yandex_checkout</directory>
+        <directory suffix="TestBase.php">../modules/commerce_yandex_checkout</directory>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>
