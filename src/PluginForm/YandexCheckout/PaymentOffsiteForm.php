@@ -9,6 +9,7 @@ use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Plugin\Field\FieldType\AdjustmentItemList;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
