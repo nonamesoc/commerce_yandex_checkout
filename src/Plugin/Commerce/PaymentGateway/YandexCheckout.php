@@ -22,6 +22,7 @@ use YandexCheckout\Client;
 use YandexCheckout\Model\NotificationEventType;
 use YandexCheckout\Model\Notification\NotificationSucceeded;
 use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
+use YandexCheckout\Model\Payment as PaymentModel;
 use YandexCheckout\Model\PaymentStatus;
 use YandexCheckout\Request\Payments\Payment\CreateCaptureRequest;
 
@@ -113,15 +114,29 @@ class YandexCheckout extends OffsitePaymentGatewayBase
 
         $form = parent::buildConfigurationForm($form, $form_state);
 
+        $token_tree = [
+          '#theme' => 'token_tree_link',
+          '#token_types' => ['commerce_order'],
+          '#show_restricted' => TRUE,
+          '#global_types' => FALSE,
+        ];
+        $rendered_token_tree = \Drupal::service('renderer')->render($token_tree);
         $form['description_template'] = [
-            '#type'          => 'textfield',
-            '#title'         => t('Описание платежа'),
-            '#description'   => t('Это описание транзакции, которое пользователь увидит при оплате, а вы — в личном кабинете Яндекс.Кассы. Например, «Оплата заказа №72».<br>
-Чтобы в описание подставлялся номер заказа (как в примере), поставьте на его месте %order_id% (Оплата заказа №%order_id%).<br>
-Ограничение для описания — 128 символов.'),
-            '#default_value' => !empty($this->configuration['description_template'])
-                ? $this->configuration['description_template']
-                : $this->t('Оплата заказа №%order_id%'),
+          '#type' => 'textfield',
+          '#title' => t('Описание платежа'),
+          '#description' => [
+            '#theme' => 'payment_description_template_help',
+            '#description' => [
+              $this->t('Это описание транзакции, которое пользователь увидит при оплате, а вы — в личном кабинете Яндекс.Кассы. Например, «Оплата заказа №72».'),
+              $this->t('You may also use tokens: @browse_link', ['@browse_link' => $rendered_token_tree]),
+              $this->t('Ограничение для описания — @max_length символов.', ['@max_length' => PaymentModel::MAX_LENGTH_DESCRIPTION])
+            ],
+          ],
+          '#default_value' => !empty($this->configuration['description_template'])
+            ? $this->configuration['description_template']
+            : $this->t('Оплата заказа №[commerce_order:order_id]'),
+          '#element_validate' => ['token_element_validate'],
+          '#token_types' => $token_tree['#token_types'],
         ];
 
         $form['receipt_enabled'] = array(
