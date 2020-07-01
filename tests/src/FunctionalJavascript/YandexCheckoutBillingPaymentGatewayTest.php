@@ -21,7 +21,7 @@ class YandexCheckoutBillingPaymentGatewayTest extends PaymentGatewayTestBase {
     return [
       'billing_id' => $this->randomGenerator->string(),
       'display_label' => 'Yandex Checkout Billing',
-      'narrative' => 'Order #%order_id%',
+      'narrative' => 'Order #[commerce_order:order_id]',
     ];
   }
 

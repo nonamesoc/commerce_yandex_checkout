@@ -34,7 +34,7 @@ class YandexCheckoutBilling extends OffsitePaymentGatewayBase
     {
         return [
                    'billing_id' => '',
-                   'narrative'  => $this->t('Order No. %order_id% Payment via Yandex.Billing'),
+                   'narrative'  => $this->t('Order No. [commerce_order:order_id] Payment via Yandex.Billing'),
                ] + parent::defaultConfiguration();
     }
 
@@ -51,14 +51,27 @@ class YandexCheckoutBilling extends OffsitePaymentGatewayBase
             '#default_value' => $this->configuration['billing_id'],
         );
 
-        $form['narrative'] = array(
-            '#type'          => 'textfield',
-            '#title'         => $this->t('Payment purpose'),
-            '#description'   => $this->t(
-                'Payment purpose is added to the payment order: specify whatever will help identify the order paid via Yandex.Billing'
-            ),
-            '#default_value' => $this->configuration['narrative'],
-        );
+        $token_tree = [
+          '#theme' => 'token_tree_link',
+          '#token_types' => ['commerce_order'],
+          '#show_restricted' => TRUE,
+          '#global_types' => FALSE,
+        ];
+        $rendered_token_tree = \Drupal::service('renderer')->render($token_tree);
+        $form['narrative'] = [
+          '#type' => 'textfield',
+          '#title' => $this->t('Payment purpose'),
+          '#description' => [
+            '#theme' => 'payment_description_template_help',
+            '#description' => [
+              $this->t('Payment purpose is added to the payment order: specify whatever will help identify the order paid via Yandex.Billing'),
+              $this->t('You may also use tokens: @browse_link', ['@browse_link' => $rendered_token_tree]),
+            ],
+          ],
+          '#default_value' => $this->configuration['narrative'],
+          '#element_validate' => ['token_element_validate'],
+          '#token_types' => $token_tree['#token_types'],
+        ];
 
         return $form;
     }

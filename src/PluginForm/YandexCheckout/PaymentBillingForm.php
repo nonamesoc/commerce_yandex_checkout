@@ -3,6 +3,7 @@
 
 namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
 
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -37,11 +38,7 @@ class PaymentBillingForm extends BasePaymentOffsiteForm
             '#parents' => ['sum'],
         ];
 
-        $narrative = str_replace(
-            '%order_id%',
-            $payment->getOrderId(),
-            $configuration['narrative']
-        );
+        $narrative = $this->createNarrative($payment->getOrder(), $configuration);
 
         $form['narrative'] = [
             '#type'    => 'hidden',
@@ -112,4 +109,14 @@ class PaymentBillingForm extends BasePaymentOffsiteForm
 
         return $element;
     }
+
+  /**
+   * @param OrderInterface $order
+   * @param array $config
+   * @return string
+   */
+  private function createNarrative(OrderInterface $order, $config) {
+    return \Drupal::token()->replace($config['description_template'], ['commerce_order' => $order]);
+  }
+
 }
