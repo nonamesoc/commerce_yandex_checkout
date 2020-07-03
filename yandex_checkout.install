@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * @file
+ * Provides module installation functions.
+ * @todo: ignore this phpcs rule.
+ */
+
+/**
  * Implements hook_requirements().
  */
 function yandex_checkout_requirements($phase) {

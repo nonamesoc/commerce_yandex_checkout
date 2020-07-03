@@ -2,12 +2,15 @@
 
 namespace Drupal\Tests\yandex_checkout\FunctionalJavascript;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Tests\commerce\FunctionalJavascript\CommerceWebDriverTestBase;
 
 /**
  * Defines base class for payment gateways admin UI test cases.
  */
 abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
+
+  use StringTranslationTrait;
 
   /**
    * The payment gateway storage.
@@ -111,7 +114,7 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
       $this->getSession()->getPage()->fillField($config_field_name, $value);
     }
 
-    $this->submitForm([], t('Save'));
+    $this->submitForm([], $this->t('Save'));
     $this->assertSession()->pageTextContains("Saved the $payment_gateway_label payment gateway.");
     $this->assertSession()->addressEquals('admin/commerce/config/payment-gateways');
 

@@ -8,8 +8,10 @@ use Drupal\commerce_payment\PaymentMethodTypeManager;
 use Drupal\commerce_payment\PaymentTypeManager;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,17 +57,8 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    EntityTypeManagerInterface $entity_type_manager,
-    PaymentTypeManager $payment_type_manager,
-    PaymentMethodTypeManager $payment_method_type_manager,
-    TimeInterface $time
-  ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $payment_type_manager,
-      $payment_method_type_manager, $time);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, PaymentTypeManager $payment_type_manager, PaymentMethodTypeManager $payment_method_type_manager, TimeInterface $time) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $payment_type_manager, $payment_method_type_manager, $time);
     $shopId = $this->configuration['shop_id'];
     $secretKey = $this->configuration['secret_key'];
     $yandexCheckoutClient = new Client();
@@ -203,7 +196,9 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
             '#markup' => '<div>',
           ];
           $form['yandex_checkout_tax']['yandex_checkout_tax_label_' . $taxRate['id'] . '_lbl'] = [
-            '#markup' => $this->t('<div style="width: 200px;float: left;padding-top: 5px;"><label>' . $taxRate['label'] . '</label></div>'),
+            '#markup' => new FormattableMarkup('<div style="width: 200px; float: left; padding-top: 5px;"><label>@label</label></div>', [
+              '@label' => $taxRate['label'],
+            ]),
           ];
 
           $defaultTaxValue = $this->configuration['yandex_checkout_tax'][$taxRate['id']] ?? 1;
@@ -246,8 +241,10 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
     $form['log_file'] = [
       '#type' => 'item',
       '#title' => $this->t('Логирование'),
-      '#markup' => $this->t('Посмотреть <a href="' . $GLOBALS['base_url'] . '/admin/reports/dblog?type[]=yandex_checkout"
-             target="_blank">записи журнала</a>.'),
+      '#markup' => Link::fromTextAndUrl('Посмотреть записи журнала', Url::fromRoute('dblog.overview', [], [
+        'query' => ['type' => ['yandex_checkout']],
+        'attributes' => ['target' => '_blank'],
+      ]))->toString(),
     ];
 
     return $form;
