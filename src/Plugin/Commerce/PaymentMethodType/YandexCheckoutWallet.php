@@ -14,31 +14,29 @@ use Drupal\commerce_payment\Entity\PaymentMethodInterface;
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutWallet extends YandexCheckoutPaymentMethod
-{
+class YandexCheckoutWallet extends YandexCheckoutPaymentMethod {
 
-    /**
-     * Gets the payment method type label.
-     *
-     * @return string
-     *   The payment method type label.
-     */
-    public function getLabel()
-    {
-        return 'Яндекс.Деньги';
-    }
+  /**
+   * Gets the payment method type label.
+   *
+   * @return string
+   *   The payment method type label.
+   */
+  public function getLabel() {
+    return 'Яндекс.Деньги';
+  }
 
-    /**
-     * Builds a label for the given payment method.
-     *
-     * @param PaymentMethodInterface $payment_method
-     *   The payment method.
-     *
-     * @return string
-     *   The label.
-     */
-    public function buildLabel(PaymentMethodInterface $payment_method)
-    {
-        // TODO: Implement buildLabel() method.
-    }
+  /**
+   * Builds a label for the given payment method.
+   *
+   * @param PaymentMethodInterface $payment_method
+   *   The payment method.
+   *
+   * @return string
+   *   The label.
+   */
+  public function buildLabel(PaymentMethodInterface $payment_method) {
+    // TODO: Implement buildLabel() method.
+  }
+
 }

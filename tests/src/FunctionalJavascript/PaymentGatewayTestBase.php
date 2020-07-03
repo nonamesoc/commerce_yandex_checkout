@@ -68,7 +68,7 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
     $data['id'] = $pluginId;
     $data['plugin'] = $pluginId;
 
-    return  $data;
+    return $data;
   }
 
   /**

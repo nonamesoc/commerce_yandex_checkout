@@ -15,7 +15,15 @@ abstract class PaymentGatewayConfigSchemaTestBase extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'profile', 'commerce', 'commerce_price', 'commerce_order', 'commerce_payment', 'yandex_checkout'];
+  public static $modules = [
+    'system',
+    'profile',
+    'commerce',
+    'commerce_price',
+    'commerce_order',
+    'commerce_payment',
+    'yandex_checkout',
+  ];
 
   /**
    * The payment gateway storage.

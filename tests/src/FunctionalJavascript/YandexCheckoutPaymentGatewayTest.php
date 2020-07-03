@@ -19,11 +19,11 @@ class YandexCheckoutPaymentGatewayTest extends PaymentGatewayTestBase {
    */
   protected function getPluginConfiguration() {
     return [
-        'shop_id' => 87654321,
-        'secret_key' => 'test_3iEwkXIv5RmV8quKUPadlMIK8oSomIbA6hiU23mSxwU',
-        'display_label' => 'Yandex Checkout',
-        'description_template' => 'Order #[commerce_order:order_id]',
-        'receipt_enabled' => 1,
+      'shop_id' => 87654321,
+      'secret_key' => 'test_3iEwkXIv5RmV8quKUPadlMIK8oSomIbA6hiU23mSxwU',
+      'display_label' => 'Yandex Checkout',
+      'description_template' => 'Order #[commerce_order:order_id]',
+      'receipt_enabled' => 1,
     ];
   }
 
