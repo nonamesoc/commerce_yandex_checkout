@@ -20,7 +20,7 @@ class YandexCheckoutConfigSchemaTest extends PaymentGatewayConfigSchemaTestBase 
       'shop_id' => 716412,
       'secret_key' => 'test_3iEwkXIv5RmV8quKUPadlMIK8oSomIbA6hiU23mSxwU',
       'display_label' => $this->getRandomGenerator()->name(),
-      'description_template' => 'Order #%order_id%',
+      'description_template' => 'Order [commerce_order:order_id]',
       'receipt_enabled' => \random_int(0, 1),
       'default_tax' => \random_int(1, 6),
       'yandex_checkout_tax' => [

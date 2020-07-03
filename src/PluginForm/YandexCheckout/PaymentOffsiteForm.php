@@ -125,41 +125,13 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
      */
     private function createDescription(OrderInterface $order, $config)
     {
-        $descriptionTemplate = !empty($config['description_template'])
-            ? $config['description_template']
-            : t('Оплата заказа №%order_id%');
+      $description_template = !empty($config['description_template'])
+        ? $config['description_template']
+        : $this->t('Оплата заказа №[commerce_order:order_id]');
 
-        $replace = array();
-        foreach ($order as $property => $fieldItems) {
-            foreach ($fieldItems as $key => $fieldItem) {
-                if (!($fieldItem instanceof FieldItemInterface)) {
-                    continue;
-                }
-                $params = $fieldItem->getEntity()->toArray();
-                if (empty($params[$property])) {
-                    continue;
-                }
-                if (!is_array($params[$property])) {
-                    continue;
-                }
-                if (empty($params[$property][0])) {
-                    continue;
-                }
-                $fieldData = $params[$property][0];
-                if (!is_array($fieldData)) {
-                    continue;
-                }
-                $value = current($fieldData);
-                if (!is_scalar($value)) {
-                    continue;
-                }
-                $replace['%'.$property.'%'] = $value;
-            }
-        }
+      $description = \Drupal::token()->replace($description_template, ['commerce_order' => $order]);
 
-        $description = strtr($descriptionTemplate, $replace);
-
-        return (string)mb_substr($description, 0, PaymentModel::MAX_LENGTH_DESCRIPTION);
+      return (string)mb_substr($description, 0, PaymentModel::MAX_LENGTH_DESCRIPTION);
     }
 
 }

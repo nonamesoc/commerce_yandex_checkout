@@ -1,0 +1,13 @@
+{#
+/**
+ * Default theme implementation to display help text for payment description template.
+ *
+ * Available variables:
+ * - descriptions: Lines of help text for payment description template.
+ *
+ * @see template_preprocess_file_upload_help()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ descriptions|safe_join('<br />') }}

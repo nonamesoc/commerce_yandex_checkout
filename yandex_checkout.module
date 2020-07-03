@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function yandex_checkout_theme() {
+  return [
+    'payment_description_template_help' => [
+      'variables' => [
+        'description' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for payment description template help text.
+ *
+ * Default template: payment-description-template-help.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - description: The normal description payment template.
+ */
+function template_preprocess_payment_description_template_help(array &$variables) {
+  $descriptions = [];
+
+  $description = $variables['description'] ?? [];
+  if (!is_array($description)) {
+    $description = [$description];
+  }
+
+  foreach ($description as $value) {
+    if (empty($value)) {
+      continue;
+    }
+
+    $descriptions[] = $value;
+  }
+
+  $variables['descriptions'] = $descriptions;
+}

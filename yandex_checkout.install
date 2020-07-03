@@ -17,3 +17,31 @@ function yandex_checkout_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Updates placeholders in payments descriptions.
+ */
+function yandex_checkout_update_8001() {
+  $gateways = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')
+    ->loadByProperties(['plugin' => ['yandex_checkout', 'yandex_checkout_billing']]);
+
+  /** @var \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway */
+  foreach ($gateways as $gateway) {
+    $plugin_id = $gateway->getPluginId();
+    $field_to_update = $plugin_id === 'yandex_checkout' ? 'description_template' : 'narrative';
+    $configuration = $gateway->getPluginConfiguration();
+    $string_to_replace = $configuration[$field_to_update] ?? NULL;
+    if (empty($string_to_replace)) {
+      continue;
+    }
+    $matches = [];
+    preg_match_all('/%(.*?)%/', $string_to_replace, $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+      $replace = "[commerce_order:$match[1]]";
+      $string_to_replace = str_replace($match[0], $replace, $string_to_replace);
+    }
+    $configuration[$field_to_update] = $string_to_replace;
+    $gateway->setPluginConfiguration($configuration);
+    $gateway->save();
+  }
+}
