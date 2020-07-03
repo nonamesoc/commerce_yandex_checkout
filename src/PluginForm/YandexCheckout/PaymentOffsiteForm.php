@@ -2,34 +2,31 @@
 
 namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
 
-use Drupal\commerce\Response\NeedsRedirectException;
-use Drupal\commerce_order\Adjustment;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_order\Entity\OrderItem;
-use Drupal\commerce_order\Plugin\Field\FieldType\AdjustmentItemList;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-use Drupal\profile\Entity\Profile;
-use Drupal\user\UserInterface;
 use Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout;
-use YandexCheckout\Client;
+use YandexCheckout\Common\Exceptions\ApiException;
 use YandexCheckout\Model\ConfirmationType;
 use YandexCheckout\Model\Payment as PaymentModel;
 use YandexCheckout\Request\Payments\CreatePaymentRequest;
 
+/**
+ * Offsite payment form.
+ */
 class PaymentOffsiteForm extends BasePaymentOffsiteForm {
 
   /**
+   * Build configuration form.
+   *
    * @param array $form
-   * @param FormStateInterface $form_state
+   *   Configuration form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    *
    * @return array
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   * @throws \Drupal\commerce\Response\NeedsRedirectException
-   * @throws \Exception
+   *   Configuration form.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     try {
@@ -37,7 +34,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
 
       /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
       $payment = $this->entity;
-      /** @var YandexCheckout $paymentGatewayPlugin */
+      /** @var \Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout $paymentGatewayPlugin */
       $paymentGatewayPlugin = $payment->getPaymentGateway()->getPlugin();
       $client = $paymentGatewayPlugin->apiClient;
       $order = $payment->getOrder();
@@ -58,19 +55,18 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
         ]);
 
       if ($config['receipt_enabled'] == 1) {
-        /** @var UserInterface $profile */
         $profile = $order->getCustomer();
         $builder->setReceiptEmail($profile->getEmail());
         $items = $order->getItems();
-        /** @var OrderItem $item */
+        /** @var \Drupal\commerce_order\Entity\OrderItem $item */
         foreach ($items as $item) {
-          /** @var AdjustmentItemList $adjustments */
+          /** @var \Drupal\commerce_order\Plugin\Field\FieldType\AdjustmentItemList $adjustments */
           $adjustments = $item->get('adjustments');
 
           $taxUuid = NULL;
           $percentage = 0;
           foreach ($adjustments->getValue() as $adjustmentValue) {
-            /** @var Adjustment $adjustment */
+            /** @var \Drupal\commerce_order\Adjustment $adjustment */
             $adjustment = $adjustmentValue['value'];
             if ($adjustment->getType() == 'tax') {
               $sourceId = explode('|', $adjustment->getSourceId());
@@ -112,20 +108,30 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
       ];
 
       return $this->buildRedirectForm($form, $form_state, $redirect_url, $data);
-    } catch (ApiException $e) {
-      \Drupal::logger('yandex_checkout')->error('Api error: ' . $e->getMessage());
-      drupal_set_message(t('Не удалось создать платеж.'), 'error');
+    }
+    catch (\Throwable $exception) {
+      $message = $exception->getMessage();
+      if ($exception instanceof ApiException) {
+        $message = 'API Error: ' . $message;
+      }
+      \Drupal::logger('yandex_checkout')->error($message);
+      \Drupal::messenger()->addError($this->t('Не удалось создать платеж.'));
       throw new PaymentGatewayException();
     }
   }
 
   /**
-   * @param OrderInterface $order
+   * Get payment narrative.
+   *
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   Commerce order entity.
    * @param array $config
+   *   Payment gateway plugin configuration.
    *
    * @return string
+   *   Payment description.
    */
-  private function createDescription(OrderInterface $order, $config) {
+  private function createDescription(OrderInterface $order, array $config) {
     $description_template = !empty($config['description_template'])
       ? $config['description_template']
       : $this->t('Оплата заказа №[commerce_order:order_id]');

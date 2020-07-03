@@ -1,13 +1,12 @@
 <?php
 
-
 namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway;
-
 
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Provides the Yandex Checkout Billing payment gateway.
  *
  * @CommercePaymentGateway(
  *   id = "yandex_checkout_billing",
@@ -23,7 +22,6 @@ use Drupal\Core\Form\FormStateInterface;
  *     "n/a" = @Translation("N/A"),
  *   }
  * )
- *
  */
 class YandexCheckoutBilling extends OffsitePaymentGatewayBase {
 
@@ -45,7 +43,7 @@ class YandexCheckoutBilling extends OffsitePaymentGatewayBase {
 
     $form['billing_id'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Yandex.Billing\'s identifier'),
+      '#title' => $this->t('Yandex.Billing identifier'),
       '#default_value' => $this->configuration['billing_id'],
     ];
 

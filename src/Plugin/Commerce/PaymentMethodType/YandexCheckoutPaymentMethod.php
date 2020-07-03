@@ -2,21 +2,19 @@
 
 namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
 
-
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentMethodType\PaymentMethodTypeBase;
-use Drupal\commerce_payment\Plugin\Commerce\PaymentMethodType\PaymentMethodTypeInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ * Provides the base payment method type class.
+ */
 abstract class YandexCheckoutPaymentMethod extends PaymentMethodTypeBase {
 
   /**
    * Builds a label for the given payment method.
    *
-   * @param PaymentMethodInterface $payment_method
+   * @param \Drupal\commerce_payment\Entity\PaymentMethodInterface $payment_method
    *   The payment method.
    *
    * @return string

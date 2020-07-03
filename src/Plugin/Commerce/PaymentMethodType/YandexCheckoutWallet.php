@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the PayPal payment method type.
+ * Provides the yandex_checkout_wallet payment method type.
  *
  * @CommercePaymentMethodType(
  *   id = "yandex_checkout_wallet",
@@ -17,23 +16,14 @@ use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 class YandexCheckoutWallet extends YandexCheckoutPaymentMethod {
 
   /**
-   * Gets the payment method type label.
-   *
-   * @return string
-   *   The payment method type label.
+   * {@inheritdoc}
    */
   public function getLabel() {
-    return 'Яндекс.Деньги';
+    return $this->t('Яндекс.Деньги');
   }
 
   /**
-   * Builds a label for the given payment method.
-   *
-   * @param PaymentMethodInterface $payment_method
-   *   The payment method.
-   *
-   * @return string
-   *   The label.
+   * {@inheritdoc}
    */
   public function buildLabel(PaymentMethodInterface $payment_method) {
     // TODO: Implement buildLabel() method.

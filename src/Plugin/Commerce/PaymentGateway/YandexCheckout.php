@@ -2,15 +2,11 @@
 
 namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway;
 
-
 use Drupal\commerce\Response\NeedsRedirectException;
-use Drupal\commerce_order\Entity\Order;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_payment\Entity\Payment;
 use Drupal\commerce_payment\PaymentMethodTypeManager;
 use Drupal\commerce_payment\PaymentTypeManager;
 use Drupal\commerce_payment\Plugin\Commerce\PaymentGateway\OffsitePaymentGatewayBase;
-use Drupal\commerce_tax\Entity\TaxType;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,6 +23,7 @@ use YandexCheckout\Model\PaymentStatus;
 use YandexCheckout\Request\Payments\Payment\CreateCaptureRequest;
 
 /**
+ * Provides the Yandex Checkout payment gateway.
  *
  * @CommercePaymentGateway(
  *   id = "yandex_checkout",
@@ -43,14 +40,15 @@ use YandexCheckout\Request\Payments\Payment\CreateCaptureRequest;
  *     "n/a" = @Translation("N/A"),
  *   }
  * )
- *
  */
 class YandexCheckout extends OffsitePaymentGatewayBase {
 
   const YAMONEY_MODULE_VERSION = '1.0.2';
 
   /**
-   * @property Client apiClient
+   * YandexCheckout API client.
+   *
+   * @var \YandexCheckout\Client
    */
   public $apiClient;
 
@@ -80,21 +78,17 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
    */
   public function defaultConfiguration() {
     return [
-        'shop_id' => '',
-        'secret_key' => '',
-        'description_template' => '',
-        'receipt_enabled' => '',
-        'default_tax' => '',
-        'yandex_checkout_tax' => [],
-      ] + parent::defaultConfiguration();
+      'shop_id' => '',
+      'secret_key' => '',
+      'description_template' => '',
+      'receipt_enabled' => '',
+      'default_tax' => '',
+      'yandex_checkout_tax' => [],
+    ] + parent::defaultConfiguration();
   }
 
   /**
-   * @param array $form
-   * @param FormStateInterface $form_state
-   *
-   * @return array
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['shop_id'] = [
@@ -120,9 +114,12 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
       '#global_types' => FALSE,
     ];
     $rendered_token_tree = \Drupal::service('renderer')->render($token_tree);
+    $description_template = !empty($this->configuration['description_template'])
+      ? $this->configuration['description_template']
+      : $this->t('Оплата заказа №[commerce_order:order_id]');
     $form['description_template'] = [
       '#type' => 'textfield',
-      '#title' => t('Описание платежа'),
+      '#title' => $this->t('Описание платежа'),
       '#description' => [
         '#theme' => 'payment_description_template_help',
         '#description' => [
@@ -131,9 +128,7 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
           $this->t('Ограничение для описания — @max_length символов.', ['@max_length' => PaymentModel::MAX_LENGTH_DESCRIPTION]),
         ],
       ],
-      '#default_value' => !empty($this->configuration['description_template'])
-        ? $this->configuration['description_template']
-        : $this->t('Оплата заказа №[commerce_order:order_id]'),
+      '#default_value' => $description_template,
       '#element_validate' => ['token_element_validate'],
       '#token_types' => $token_tree['#token_types'],
     ];
@@ -144,18 +139,16 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
       '#default_value' => $this->configuration['receipt_enabled'],
     ];
     if ($this->configuration['receipt_enabled']) {
-
-
       $form['default_tax'] = [
         '#type' => 'select',
         '#title' => 'Ставка по умолчанию',
         '#options' => [
-          1 => t('Без НДС'),
-          2 => t('0%'),
-          3 => t('10%'),
-          4 => t('20%'),
-          5 => t('Расчётная ставка 10/110'),
-          6 => t('Расчётная ставка 20/120'),
+          1 => $this->t('Без НДС'),
+          2 => $this->t('0%'),
+          3 => $this->t('10%'),
+          4 => $this->t('20%'),
+          5 => $this->t('Расчётная ставка 10/110'),
+          6 => $this->t('Расчётная ставка 20/120'),
         ],
         '#default_value' => $this->configuration['default_tax'],
       ];
@@ -164,7 +157,7 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
       $taxTypes = $tax_storage->loadMultiple();
       $taxRates = [];
       foreach ($taxTypes as $taxType) {
-        /** @var TaxType $taxType */
+        /** @var \Drupal\commerce_tax\Entity\TaxType $taxType */
         $taxTypeConfiguration = $taxType->getPluginConfiguration();
         $taxRates += $taxTypeConfiguration['rates'];
       }
@@ -194,11 +187,11 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
         ];
 
         $form['yandex_checkout_label_shop_tax'] = [
-          '#markup' => t('<div style="float: left;width: 200px;">Ставка в вашем магазине.</div>'),
+          '#markup' => $this->t('<div style="float: left;width: 200px;">Ставка в вашем магазине.</div>'),
         ];
 
         $form['yandex_checkout_label_tax_rate'] = [
-          '#markup' => t('<div>Ставка для чека в налоговую.</div>'),
+          '#markup' => $this->t('<div>Ставка для чека в налоговую.</div>'),
         ];
 
         $form['yandex_checkout_tax_wrapper_end'] = [
@@ -210,23 +203,21 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
             '#markup' => '<div>',
           ];
           $form['yandex_checkout_tax']['yandex_checkout_tax_label_' . $taxRate['id'] . '_lbl'] = [
-            '#markup' => t('<div style="width: 200px;float: left;padding-top: 5px;"><label>' . $taxRate['label'] . '</label></div>'),
+            '#markup' => $this->t('<div style="width: 200px;float: left;padding-top: 5px;"><label>' . $taxRate['label'] . '</label></div>'),
           ];
 
-          $defaultTaxValue = isset($this->configuration['yandex_checkout_tax'][$taxRate['id']])
-            ? $this->configuration['yandex_checkout_tax'][$taxRate['id']]
-            : 1;
+          $defaultTaxValue = $this->configuration['yandex_checkout_tax'][$taxRate['id']] ?? 1;
           $form['yandex_checkout_tax'][$taxRate['id']] = [
             '#type' => 'select',
             '#title' => FALSE,
             '#label' => FALSE,
             '#options' => [
-              1 => t('Без НДС'),
-              2 => t('0%'),
-              3 => t('10%'),
-              4 => t('20%'),
-              5 => t('Расчётная ставка 10/110'),
-              6 => t('Расчётная ставка 20/120'),
+              1 => $this->t('Без НДС'),
+              2 => $this->t('0%'),
+              3 => $this->t('10%'),
+              4 => $this->t('20%'),
+              5 => $this->t('Расчётная ставка 10/110'),
+              6 => $this->t('Расчётная ставка 20/120'),
             ],
             '#default_value' => $defaultTaxValue,
           ];
@@ -247,22 +238,24 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
     if ($gateway) {
       $form['notification_url'] = [
         '#type' => 'textfield',
-        '#title' => t('Url для нотификаций'),
+        '#title' => $this->t('Url для нотификаций'),
         '#default_value' => $gateway->getPlugin()->getNotifyUrl()->toString(),
         '#attributes' => ['readonly' => 'readonly'],
       ];
     }
     $form['log_file'] = [
       '#type' => 'item',
-      '#title' => t('Логирование'),
-      '#markup' => t('Посмотреть <a href="' . $GLOBALS['base_url'] . '/admin/reports/dblog?type[]=yandex_checkout"
+      '#title' => $this->t('Логирование'),
+      '#markup' => $this->t('Посмотреть <a href="' . $GLOBALS['base_url'] . '/admin/reports/dblog?type[]=yandex_checkout"
              target="_blank">записи журнала</a>.'),
     ];
-
 
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValue($form['#parents']);
     if (!preg_match('/^test_.*|live_.*$/i', $values['secret_key'])) {
@@ -296,18 +289,6 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
    *   The order.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request.
-   *
-   * @throws NeedsRedirectException
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   * @throws \YandexCheckout\Common\Exceptions\ApiException
-   * @throws \YandexCheckout\Common\Exceptions\BadApiRequestException
-   * @throws \YandexCheckout\Common\Exceptions\ForbiddenException
-   * @throws \YandexCheckout\Common\Exceptions\InternalServerError
-   * @throws \YandexCheckout\Common\Exceptions\NotFoundException
-   * @throws \YandexCheckout\Common\Exceptions\ResponseProcessingException
-   * @throws \YandexCheckout\Common\Exceptions\TooManyRequestsException
-   * @throws \YandexCheckout\Common\Exceptions\UnauthorizedException
    */
   public function onReturn(OrderInterface $order, Request $request) {
     $payment_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment');
@@ -315,7 +296,7 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
     if ($payments) {
       $payment = reset($payments);
     }
-    /** @var Payment $payment */
+    /** @var \Drupal\commerce_payment\Entity\Payment $payment */
     $paymentId = $payment->getRemoteId();
     $apiClient = $this->apiClient;
     $cancelUrl = $this->buildCancelUrl($order);
@@ -361,16 +342,6 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
    *
    * @return \Symfony\Component\HttpFoundation\Response|null
    *   The response, or NULL to return an empty HTTP 200 response.
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   * @throws \YandexCheckout\Common\Exceptions\ApiException
-   * @throws \YandexCheckout\Common\Exceptions\BadApiRequestException
-   * @throws \YandexCheckout\Common\Exceptions\ForbiddenException
-   * @throws \YandexCheckout\Common\Exceptions\InternalServerError
-   * @throws \YandexCheckout\Common\Exceptions\NotFoundException
-   * @throws \YandexCheckout\Common\Exceptions\ResponseProcessingException
-   * @throws \YandexCheckout\Common\Exceptions\TooManyRequestsException
-   * @throws \YandexCheckout\Common\Exceptions\UnauthorizedException
    */
   public function onNotify(Request $request) {
     $rawBody = $request->getContent();
@@ -387,9 +358,9 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
     if (!$payments) {
       return new Response('Bad request', 400);
     }
-    /** @var Payment $payment */
+    /** @var \Drupal\commerce_payment\Entity\Payment $payment */
     $payment = reset($payments);
-    /** @var Order $order */
+    /** @var \Drupal\commerce_order\Entity\Order $order */
     $order = $payment->getOrder();
     if (!$order) {
       return new Response('Order not found', 404);
@@ -425,12 +396,14 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
             return new Response('Payment canceled', 200);
           }
           break;
+
         case PaymentStatus::PENDING:
           $payment->setRemoteState($paymentInfo->status);
           $payment->save();
           $this->log('Payment pending');
 
           return new Response(' Payment Required', 402);
+
         case PaymentStatus::SUCCEEDED:
           $payment->setRemoteState($paymentInfo->status);
           $order->state = 'completed';
@@ -440,6 +413,7 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
           $this->log('Payment complete');
 
           return new Response('Payment complete', 200);
+
         case PaymentStatus::CANCELED:
           $payment->setRemoteState($paymentInfo->status);
           $payment->save();
@@ -455,12 +429,13 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
   /**
    * Builds the URL to the "cancel" page.
    *
-   * @param OrderInterface $order
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   Commerce Order entity.
    *
-   * @return Url The "cancel" page URL.
-   * The "cancel" page URL.
+   * @return \Drupal\Core\Url
+   *   The "cancel" page URL.
    */
-  protected function buildCancelUrl($order) {
+  protected function buildCancelUrl(OrderInterface $order) {
     return Url::fromRoute('commerce_payment.checkout.cancel', [
       'commerce_order' => $order->id(),
       'step' => 'payment',
@@ -468,7 +443,10 @@ class YandexCheckout extends OffsitePaymentGatewayBase {
   }
 
   /**
-   * @param $message
+   * Log message.
+   *
+   * @param string|\Drupal\Core\StringTranslation\TranslatableMarkup $message
+   *   Message.
    */
   private function log($message) {
     \Drupal::logger('yandex_checkout')->info($message);

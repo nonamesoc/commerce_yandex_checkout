@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
 
 use Drupal\commerce_order\Entity\OrderInterface;
@@ -8,6 +7,9 @@ use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteF
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
+/**
+ * Billing payment form.
+ */
 class PaymentBillingForm extends BasePaymentOffsiteForm {
 
   const QUICK_API_PAY_VERSION = 2;
@@ -54,7 +56,7 @@ class PaymentBillingForm extends BasePaymentOffsiteForm {
 
     $form['fio'] = [
       '#type' => 'textfield',
-      '#title' => t('Payer\'s full name'),
+      '#title' => $this->t('Payer full name'),
       '#required' => TRUE,
       '#parents' => ['fio'],
       '#prefix' => '<div class="form-group">',
@@ -71,13 +73,19 @@ class PaymentBillingForm extends BasePaymentOffsiteForm {
     return $form;
   }
 
+  /**
+   * Validate configuration form.
+   *
+   * @param array $form
+   *   The form whose value is being validated.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     $customerName = trim($form_state->getValue('fio'));
     $parts = preg_split('/\s+/', $customerName);
-    if ($customerName
-      && count($parts) != 3
-    ) {
-      $form_state->setErrorByName('plugin', t('Ф.И.О. плательщика введено не верно.'));
+    if ($customerName && count($parts) != 3) {
+      $form_state->setErrorByName('plugin', $this->t('Ф.И.О. плательщика введено не верно.'));
     }
   }
 
@@ -94,8 +102,8 @@ class PaymentBillingForm extends BasePaymentOffsiteForm {
    * @param array $complete_form
    *   The complete form structure.
    *
-   * @return array The processed form element.
-   * The processed form element.
+   * @return array
+   *   The processed form element.
    */
   public static function processRedirectForm(array $element, FormStateInterface $form_state, array &$complete_form) {
     $complete_form['#attributes']['class'][] = 'payment-redirect-form';
@@ -109,12 +117,17 @@ class PaymentBillingForm extends BasePaymentOffsiteForm {
   }
 
   /**
-   * @param OrderInterface $order
+   * Get payment narrative.
+   *
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   Commerce order entity.
    * @param array $config
+   *   Payment gateway plugin configuration.
    *
    * @return string
+   *   Payment narrative.
    */
-  private function createNarrative(OrderInterface $order, $config) {
+  private function createNarrative(OrderInterface $order, array $config) {
     return \Drupal::token()->replace($config['description_template'], ['commerce_order' => $order]);
   }
 

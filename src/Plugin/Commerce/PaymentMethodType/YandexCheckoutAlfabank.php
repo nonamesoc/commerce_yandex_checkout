@@ -6,6 +6,7 @@ use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 use Drupal\commerce\BundleFieldDefinition;
 
 /**
+ * Provides the yandex_checkout_alfabank payment method type.
  *
  * @CommercePaymentMethodType(
  *   id = "yandex_checkout_alfabank",
@@ -16,13 +17,10 @@ use Drupal\commerce\BundleFieldDefinition;
 class YandexCheckoutAlfabank extends YandexCheckoutPaymentMethod {
 
   /**
-   * Gets the payment method type label.
-   *
-   * @return string
-   *   The payment method type label.
+   * {@inheritdoc}
    */
   public function getLabel() {
-    return 'Альфа-Клик';
+    return $this->t('Альфа-Клик');
   }
 
   /**
@@ -42,8 +40,8 @@ class YandexCheckoutAlfabank extends YandexCheckoutPaymentMethod {
     $fields = parent::buildFieldDefinitions();
 
     $fields['alfabank_login'] = BundleFieldDefinition::create('string')
-      ->setLabel(t('Alfabank Login'))
-      ->setDescription(t('The email address associated with the PayPal account.'))
+      ->setLabel($this->t('Alfabank Login'))
+      ->setDescription($this->t('The email address associated with the PayPal account.'))
       ->setRequired(TRUE);
 
     return $fields;
