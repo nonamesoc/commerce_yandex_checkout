@@ -1,4 +1,4 @@
-dist: trusty
+dist: bionic
 language: php
 
 php:
@@ -8,9 +8,9 @@ php:
 
 addons:
   chrome: stable
-#  apt:
-#    packages:
-#      - chromium-chromedriver
+  apt:
+    packages:
+      - chromium-chromedriver
 
 services:
   - mysql
@@ -49,7 +49,6 @@ before_install:
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
 install:
-  - sudo apt-get --only-upgrade install google-chrome-stable
   # Create the database.
   - mysql -e 'create database drupal'
 
