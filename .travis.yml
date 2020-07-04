@@ -93,5 +93,5 @@ before_script:
   - google-chrome-stable --headless --disable-gpu --port=9515 --verbose http://localhost &
 
 script:
-  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
+  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $TRAVIS_BUILD_DIR/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
   - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,test,profile,theme" $TRAVIS_BUILD_DIR
