@@ -11,12 +11,14 @@ addons:
 
 services:
   - mysql
+  - docker
 
 env:
   global:
     - MODULE=commerce_yandex_checkout
     - PATH="$PATH:$HOME/.composer/vendor/bin"
     - SYMFONY_DEPRECATIONS_HELPER='disabled'
+    - DOCKER_COMPOSE_VERSION=1.4.2
   jobs:
 #    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
@@ -40,7 +42,15 @@ before_install:
   - composer global require "drupal/coder:8.3.*"
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
 install:
+  - docker-compose build
+  - docker-compose run chromedriver
+
   # Remember the current entity test directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
   # Navigate out of module directory to prevent blown stack by recursive module lookup.
@@ -75,15 +85,15 @@ install:
       then composer --working-dir=$DRUPAL_BUILD_DIR run-script drupal-phpunit-upgrade;
     fi
 
-  # Install Chromedriver.
-  - mkdir travis-chromedriver
-  - CHROMEDRIVER_VERSION=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -qO-)
-  - wget http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip -d travis-chromedriver && rm -f chromedriver_linux64.zip
-  - chmod a+x travis-chromedriver/chromedriver
-  - export PATH=$PWD/travis-chromedriver:$PATH
-  - chromedriver --version
-  - google-chrome-stable --version
+#  # Install Chromedriver.
+#  - mkdir travis-chromedriver
+#  - CHROMEDRIVER_VERSION=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -qO-)
+#  - wget http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+#  - unzip chromedriver_linux64.zip -d travis-chromedriver && rm -f chromedriver_linux64.zip
+#  - chmod a+x travis-chromedriver/chromedriver
+#  - export PATH=$PWD/travis-chromedriver:$PATH
+#  - chromedriver --version
+#  - google-chrome-stable --version
 
   # Start a web server on port 8888, run in the background; wait for initialization.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
@@ -91,9 +101,10 @@ install:
   - export SIMPLETEST_BASE_URL=http://localhost:8888
 
 before_script:
-  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
+#  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
+#  - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
+#  - chromedriver &
   - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
-  - chromedriver &
 
 script:
   - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group $MODULE --verbose
