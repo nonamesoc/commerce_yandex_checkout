@@ -9,6 +9,9 @@ php:
 addons:
   chrome: stable
 
+services:
+  - mysql
+
 env:
   global:
     - MODULE=commerce_yandex_checkout
@@ -21,12 +24,6 @@ env:
 
 jobs:
   fast_finish: true
-
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
-
 
 # Cache composer downloads.
 cache:
