@@ -49,6 +49,7 @@ before_install:
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
 install:
+  - apt-get --only-upgrade install google-chrome-stable
   # Create the database.
   - mysql -e 'create database drupal'
 
