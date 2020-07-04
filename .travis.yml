@@ -18,7 +18,7 @@ env:
     - MODULE=commerce_yandex_checkout
     - PATH="$PATH:$HOME/.composer/vendor/bin"
     - SYMFONY_DEPRECATIONS_HELPER='disabled'
-    - DOCKER_COMPOSE_VERSION=1.4.2
+    - DOCKER_COMPOSE_VERSION=1.26.2
   jobs:
 #    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
