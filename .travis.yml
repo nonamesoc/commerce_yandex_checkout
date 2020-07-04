@@ -8,9 +8,9 @@ php:
 
 addons:
   chrome: stable
-  apt:
-    packages:
-      - chromium-chromedriver
+#  apt:
+#    packages:
+#      - chromium-chromedriver
 
 services:
   - mysql
@@ -90,6 +90,7 @@ install:
   - chmod a+x travis-chromedriver/chromedriver
   - export PATH=$PWD/travis-chromedriver:$PATH
   - chromedriver --version
+  - google-chrome-stable --version
 
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
