@@ -8,18 +8,18 @@ php:
 
 addons:
   chrome: stable
-  apt:
-    packages:
-      - chromium-chromedriver
+#  apt:
+#    packages:
+#      - chromium-chromedriver
 
 services:
   - mysql
 
 env:
   global:
-    - DRUPAL_BUILD_DIR=$TRAVIS_BUILD_DIR/../drupal
-    - SIMPLETEST_DB=mysql://root:@127.0.0.1/drupal
+    - MODULE=commerce_yandex_checkout
     - PATH="$PATH:$HOME/.composer/vendor/bin"
+    - SYMFONY_DEPRECATIONS_HELPER='disabled'
   jobs:
 #    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
@@ -27,11 +27,6 @@ env:
 
 jobs:
   fast_finish: true
-
-mysql:
-  database: drupal
-  username: root
-  encoding: utf8
 
 # Cache composer downloads.
 cache:
@@ -49,14 +44,26 @@ before_install:
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
 install:
+  # Remember the current entity test directory for later use in the Drupal
+  # installation.
+  - TESTDIR=$(pwd)
+  # Navigate out of module directory to prevent blown stack by recursive module
+  # lookup.
+  - cd ..
+
   # Create the database.
-  - mysql -e 'create database drupal'
+  - mysql -e "create database $MODULE"
+  # Export web server URL for browser tests.
+  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/$MODULE
 
-  # Download Drupal 8 core from the Github mirror because it is faster.
-  - git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git $DRUPAL_BUILD_DIR
+  # Download Drupal 8 core.
+  - travis_retry git clone --depth=1 --branch $DRUPAL_CORE https://git.drupal.org/project/drupal.git
+  - cd drupal
+  # Store the path to Drupal root.
+  - DRUPAL_BUILD_DIR=$(pwd)
 
-  # Reference the module in the build site.
-  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout
+  # Reference $MODULE in build site.
+  - ln -s $TESTDIR modules/$MODULE
 
   # Bring in the module dependencies without requiring a merge plugin. The
   # require also triggers a full 'composer install'.
@@ -75,16 +82,6 @@ install:
       then composer --working-dir=$DRUPAL_BUILD_DIR run-script drupal-phpunit-upgrade;
     fi
 
-  # Start a web server on port 8080 in the background.
-  - nohup php -S localhost:8080 > /dev/null 2>&1 &
-
-  # Wait until the web server is responding.
-  - until curl -s localhost:8080; do true; done > /dev/null
-
-  - export SIMPLETEST_DB='mysql://root:@localhost/drupal'
-  - export SIMPLETEST_BASE_URL='http://localhost:8080'
-  - export SYMFONY_DEPRECATIONS_HELPER='disabled'
-
   # Install Chromedriver.
   - mkdir travis-chromedriver
   - CHROMEDRIVER_VERSION=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -qO-)
@@ -95,11 +92,17 @@ install:
   - chromedriver --version
   - google-chrome-stable --version
 
+  # Start a web server on port 8888, run in the background; wait for
+  # initialization.
+  - nohup php -S localhost:8888 > /dev/null 2>&1 &
+  # Export web server URL for browser tests.
+  - export SIMPLETEST_BASE_URL=http://localhost:8888
+
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
   - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
   - chromedriver &
 
 script:
-  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group commerce_yandex_checkout --verbose
-  - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,test,profile,theme" $TRAVIS_BUILD_DIR
+  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group $MODULE --verbose
+  - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,test,profile,theme" $TESTDIR
