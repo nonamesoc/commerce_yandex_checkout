@@ -90,5 +90,4 @@ before_script:
 script:
   - pwd
   - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group commerce_yandex_checkout
-  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml --verbose $TRAVIS_BUILD_DIR
   - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,test,profile,theme" $TRAVIS_BUILD_DIR
