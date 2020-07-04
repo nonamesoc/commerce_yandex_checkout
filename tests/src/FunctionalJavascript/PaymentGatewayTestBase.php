@@ -93,18 +93,19 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
     $this->assertSession()->addressEquals('admin/commerce/config/payment-gateways/add');
 
     $base_fields = $this->getPluginBaseFields();
+    foreach ($base_fields as $field => $value) {
+      $this->assertArrayHasKey($field, $base_fields);
+      $this->assertSession()->fieldExists($field);
+      $this->assertTrue($this->getSession()->getPage()->findField($field)->isVisible());
+      $this->getSession()->getPage()->fillField($field, $value);
+    }
+
     $payment_gateway_id = $base_fields['id'];
     $payment_gateway_label = $base_fields['label'];
     $payment_gateway_plugin_id = $base_fields['plugin'];
 
     $this->getSession()->getPage()->selectFieldOption('plugin', $payment_gateway_plugin_id);
-    $this->assertSession()->assertWaitOnAjaxRequest(60000);
-
-    foreach ($base_fields as $field => $value) {
-      $this->assertArrayHasKey($field, $base_fields);
-      $this->assertSession()->fieldExists($field);
-      $this->getSession()->getPage()->fillField($field, $value);
-    }
+    $this->assertSession()->assertWaitOnAjaxRequest();
 
     $plugin_config = $this->getPluginConfiguration();
     foreach ($plugin_config as $field => $value) {
