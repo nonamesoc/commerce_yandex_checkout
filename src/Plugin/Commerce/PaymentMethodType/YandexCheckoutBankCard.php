@@ -5,7 +5,7 @@ namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the PayPal payment method type.
+ * Provides the yandex_checkout_bankcard payment method type.
  *
  * @CommercePaymentMethodType(
  *   id = "yandex_checkout_bankcard",
@@ -13,31 +13,20 @@ use Drupal\commerce_payment\Entity\PaymentMethodInterface;
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutBankCard extends YandexCheckoutPaymentMethod
-{
+class YandexCheckoutBankCard extends YandexCheckoutPaymentMethod {
 
-    /**
-     * Gets the payment method type label.
-     *
-     * @return string
-     *   The payment method type label.
-     */
-    public function getLabel()
-    {
-        return 'Банковские карты — Visa, Mastercard и Maestro, «Мир»';
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    return $this->t('Банковские карты — Visa, Mastercard и Maestro, «Мир»');
+  }
 
-    /**
-     * Builds a label for the given payment method.
-     *
-     * @param PaymentMethodInterface $payment_method
-     *   The payment method.
-     *
-     * @return string
-     *   The label.
-     */
-    public function buildLabel(PaymentMethodInterface $payment_method)
-    {
-        // TODO: Implement buildLabel() method.
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function buildLabel(PaymentMethodInterface $payment_method) {
+    // TODO: Implement buildLabel() method.
+  }
+
 }

@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
-
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
+ * Provides the yandex_checkout_billing payment method type.
  *
  * @CommercePaymentMethodType(
  *   id = "yandex_checkout_billing",
@@ -14,22 +13,20 @@ use Drupal\commerce_payment\Entity\PaymentMethodInterface;
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutBilling extends YandexCheckoutPaymentMethod
-{
+class YandexCheckoutBilling extends YandexCheckoutPaymentMethod {
 
-    /**
-     * Gets the payment method type label.
-     *
-     * @return string
-     *   The payment method type label.
-     */
-    public function getLabel()
-    {
-        return t('Yandex.Billing (bank card, e-wallets)');
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    return $this->t('Yandex.Billing (bank card, e-wallets)');
+  }
 
-    public function buildLabel(PaymentMethodInterface $payment_method)
-    {
-        // TODO: Implement buildLabel() method.
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function buildLabel(PaymentMethodInterface $payment_method) {
+    // TODO: Implement buildLabel() method.
+  }
+
 }

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/davpsh/commerce_yandex_checkout.svg?branch=8.x-2.x)](https://travis-ci.org/davpsh/commerce_yandex_checkout)
+
 # yandex-money-cms-v2-drupal8
 
 С помощью модуля можно настроить прием платежей через Яндекс.Кассу

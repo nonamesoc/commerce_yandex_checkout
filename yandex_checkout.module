@@ -1,6 +1,12 @@
 <?php
 
 /**
+ * @file
+ * Provides module functions.
+ * @todo: ignore this phpcs rule.
+ */
+
+/**
  * Implements hook_theme().
  */
 function yandex_checkout_theme() {
