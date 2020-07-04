@@ -90,8 +90,8 @@ before_script:
   # include ChromeDriver in PATH
   #- ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
   # start Chrome and listen on localhost
-  #- google-chrome-stable --headless --disable-gpu --remote-debugging-port=9515 http://localhost &
+  - google-chrome-stable --headless --disable-gpu --port=9515 --verbose http://localhost &
 
 script:
+  - $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
   - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,test,profile,theme" $TRAVIS_BUILD_DIR
-  #- $DRUPAL_BUILD_DIR/vendor/bin/phpunit -c $DRUPAL_BUILD_DIR/core/phpunit.xml.dist --verbose $TRAVIS_BUILD_DIR
