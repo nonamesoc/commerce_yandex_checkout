@@ -3,7 +3,6 @@
 namespace Drupal\Tests\yandex_checkout\Functional;
 
 use Drupal\Tests\BrowserTestBase;
-use Drupal\user\Entity\User;
 
 /**
  * Empty test.

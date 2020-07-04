@@ -8,12 +8,6 @@ php:
 
 addons:
   chrome: stable
-#  apt:
-#    packages:
-#      - chromium-chromedriver
-
-services:
-  - mysql
 
 env:
   global:
@@ -44,11 +38,9 @@ before_install:
   - phpcs --config-set installed_paths $HOME/.composer/vendor/drupal/coder/coder_sniffer
 
 install:
-  # Remember the current entity test directory for later use in the Drupal
-  # installation.
+  # Remember the current entity test directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
-  # Navigate out of module directory to prevent blown stack by recursive module
-  # lookup.
+  # Navigate out of module directory to prevent blown stack by recursive module lookup.
   - cd ..
 
   # Create the database.
@@ -70,14 +62,12 @@ install:
   - composer --working-dir=$DRUPAL_BUILD_DIR require drupal/commerce:^2.14
   - composer --working-dir=$DRUPAL_BUILD_DIR require yandex-money/yandex-checkout-sdk-php:^1.5
 
-  # For Drupal < 8.8 we have to manually upgrade zend-stdlib to avoid PHP 7.3
-  # incompatibilities.
+  # For Drupal < 8.8 we have to manually upgrade zend-stdlib to avoid PHP 7.3 incompatibilities.
   - if [[ "$DRUPAL_CORE" = "8.6.x" || "$DRUPAL_CORE" = "8.7.x" ]];
       then composer --working-dir=$DRUPAL_BUILD_DIR require zendframework/zend-stdlib:3.2.1;
     fi
 
-  # For Drupal < 8.8 we have to manually upgrade phpunit to avoid PHP 7.3
-  # incompatibilities.
+  # For Drupal < 8.8 we have to manually upgrade phpunit to avoid PHP 7.3 incompatibilities.
   - if [[ "$DRUPAL_CORE" = "8.6.x" || "$DRUPAL_CORE" = "8.7.x" ]];
       then composer --working-dir=$DRUPAL_BUILD_DIR run-script drupal-phpunit-upgrade;
     fi
@@ -92,8 +82,7 @@ install:
   - chromedriver --version
   - google-chrome-stable --version
 
-  # Start a web server on port 8888, run in the background; wait for
-  # initialization.
+  # Start a web server on port 8888, run in the background; wait for initialization.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
   # Export web server URL for browser tests.
   - export SIMPLETEST_BASE_URL=http://localhost:8888
