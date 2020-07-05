@@ -6,8 +6,8 @@ php:
 #  - 7.2
   - 7.1
 
-#addons:
-#  chrome: stable
+addons:
+  chrome: stable
 
 services:
   - mysql
@@ -48,8 +48,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
-  - docker-compose up -d --build
-#  - docker-compose run chromedriver
+#  - docker-compose up -d --build
 
   # Remember the current entity test directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
@@ -89,15 +88,15 @@ install:
       then composer --working-dir=$DRUPAL_BUILD_DIR run-script drupal-phpunit-upgrade;
     fi
 
-#  # Install Chromedriver.
-#  - mkdir travis-chromedriver
-#  - CHROMEDRIVER_VERSION=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -qO-)
-#  - wget http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-#  - unzip chromedriver_linux64.zip -d travis-chromedriver && rm -f chromedriver_linux64.zip
-#  - chmod a+x travis-chromedriver/chromedriver
-#  - export PATH=$PWD/travis-chromedriver:$PATH
-#  - chromedriver --version
-#  - google-chrome-stable --version
+  # Install Chromedriver.
+  - mkdir travis-chromedriver
+  - CHROMEDRIVER_VERSION=$(wget http://chromedriver.storage.googleapis.com/LATEST_RELEASE -qO-)
+  - wget http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip -d travis-chromedriver && rm -f chromedriver_linux64.zip
+  - chmod a+x travis-chromedriver/chromedriver
+  - export PATH=$PWD/travis-chromedriver:$PATH
+  - chromedriver --version
+  - google-chrome-stable --version
 
   # Start a web server on port 8888, run in the background; wait for initialization.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
@@ -105,10 +104,10 @@ install:
   - export SIMPLETEST_BASE_URL=http://localhost:8888
 
 before_script:
-#  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
-#  - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
-#  - chromedriver &
+  - google-chrome-stable --headless --disable-gpu --no-sandbox --remote-debugging-port=9222 http://localhost &
   - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
+  - chromedriver &
+#  - export MINK_DRIVER_ARGS_WEBDRIVER='["chrome", {"browserName":"chrome","chromeOptions":{"args":["--disable-gpu","--headless","--no-sandbox","--disable-dev-shm-usage","--disable-extensions"]}}, "http://localhost:9515"]'
 
 script:
   - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group $MODULE --verbose
