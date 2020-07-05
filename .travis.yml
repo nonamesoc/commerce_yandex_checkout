@@ -6,8 +6,8 @@ php:
 #  - 7.2
   - 7.1
 
-addons:
-  chrome: stable
+#addons:
+#  chrome: stable
 
 services:
   - mysql
