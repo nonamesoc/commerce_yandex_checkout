@@ -48,8 +48,8 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 
 install:
-  - docker-compose build
-  - docker-compose run chromedriver
+  - docker-compose up -d --build
+#  - docker-compose run chromedriver
 
   # Remember the current entity test directory for later use in the Drupal installation.
   - TESTDIR=$(pwd)
