@@ -20,9 +20,9 @@ env:
     - SYMFONY_DEPRECATIONS_HELPER='disabled'
     - DOCKER_COMPOSE_VERSION=1.26.2
   jobs:
-#    - DRUPAL_CORE=8.6.x
-#    - DRUPAL_CORE=8.7.x
-    - DRUPAL_CORE=8.8.x
+    - DRUPAL_CORE=8.6.x
+    - DRUPAL_CORE=8.7.x
+#    - DRUPAL_CORE=8.8.x
 
 jobs:
   fast_finish: true
