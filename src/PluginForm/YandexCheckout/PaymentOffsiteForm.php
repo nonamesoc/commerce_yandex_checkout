@@ -111,7 +111,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
     }
     catch (ApiException $exception) {
       $message = $exception->getMessage();
-      \Drupal::logger('yandex_checkout')->error('API Error: ' . $message;);
+      \Drupal::logger('yandex_checkout')->error('API Error: ' . $message);
       \Drupal::messenger()->addError($this->t('Не удалось создать платеж.'));
       throw new PaymentGatewayException();
     }
