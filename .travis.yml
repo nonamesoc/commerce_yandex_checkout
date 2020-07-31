@@ -23,7 +23,7 @@ env:
 #    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
 #    - DRUPAL_CORE=8.8.x
-    - DRUPAL_CORE=8.8.1
+    - DRUPAL_CORE=8.9.x
 
 jobs:
   fast_finish: true
