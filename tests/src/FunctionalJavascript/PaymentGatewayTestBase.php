@@ -104,7 +104,7 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
     $payment_gateway_plugin_id = $base_fields['plugin'];
 
     $this->getSession()->getPage()->selectFieldOption('plugin', $payment_gateway_plugin_id);
-    $this->assertSession()->assertWaitOnAjaxRequest();
+    $this->assertSession()->assertWaitOnAjaxRequest(600000);
 
     $plugin_config = $this->getPluginConfiguration();
     foreach ($plugin_config as $field => $value) {
