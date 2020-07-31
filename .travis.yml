@@ -22,7 +22,8 @@ env:
   jobs:
 #    - DRUPAL_CORE=8.6.x
 #    - DRUPAL_CORE=8.7.x
-    - DRUPAL_CORE=8.8.x
+#    - DRUPAL_CORE=8.8.x
+    - DRUPAL_CORE=8.8.1
 
 jobs:
   fast_finish: true
@@ -112,4 +113,4 @@ before_script:
 
 script:
   - $DRUPAL_BUILD_DIR/vendor/bin/phpunit --configuration $DRUPAL_BUILD_DIR/core --group $MODULE --verbose
-  - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,profile,theme" $TESTDIR
+  - phpcs --report=full --colors --standard="Drupal,DrupalPractice" --extensions="php,module,inc,install,profile,theme" --ignore="tests" $TESTDIR
