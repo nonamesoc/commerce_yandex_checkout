@@ -96,8 +96,7 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
     foreach ($base_fields as $field => $value) {
       $this->assertArrayHasKey($field, $base_fields);
       $this->assertSession()->fieldExists($field);
-//      $this->assertTrue($this->getSession()->getPage()->findField($field)->isVisible());
-//      $this->getSession()->getPage()->fillField($field, $value);
+      $this->getSession()->getPage()->fillField($field, $value);
     }
 
     $payment_gateway_id = $base_fields['id'];
