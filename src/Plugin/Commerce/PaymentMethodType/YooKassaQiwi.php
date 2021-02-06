@@ -1,20 +1,20 @@
 <?php
 
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
-
+use Drupal\commerce_payment\Annotation\CommercePaymentMethodType;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
  * Provides the PayPal payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_wallet",
+ *   id = "yookassa_qiwi",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutWallet extends YandexCheckoutPaymentMethod
+class YooKassaQiwi extends YooKassaPaymentMethod
 {
 
     /**
@@ -25,7 +25,7 @@ class YandexCheckoutWallet extends YandexCheckoutPaymentMethod
      */
     public function getLabel()
     {
-        return 'Яндекс.Деньги';
+        return 'QIWI Wallet';
     }
 
     /**

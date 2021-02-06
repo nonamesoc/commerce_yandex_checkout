@@ -1,21 +1,26 @@
 <?php
 
-namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
+namespace Drupal\yookassa\PluginForm\YooKassa;
 
+use Drupal;
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_order\Adjustment;
+use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItem;
 use Drupal\commerce_order\Plugin\Field\FieldType\AdjustmentItemList;
+use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-use Drupal\profile\Entity\Profile;
-use Drupal\user\UserInterface;
-use Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout;
-use YandexCheckout\Client;
-use YandexCheckout\Model\ConfirmationType;
-use YandexCheckout\Request\Payments\CreatePaymentRequest;
+use Drupal\yookassa\Plugin\Commerce\PaymentGateway\YooKassa;
+use Exception;
+use YooKassa\Common\Exceptions\ApiException;
+use YooKassa\Model\ConfirmationType;
+use YooKassa\Model\Payment;
+use YooKassa\Request\Payments\CreatePaymentRequest;
 
 class PaymentOffsiteForm extends BasePaymentOffsiteForm
 {
@@ -23,19 +28,19 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
      * @param array $form
      * @param FormStateInterface $form_state
      * @return array
-     * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-     * @throws \Drupal\Core\Entity\EntityStorageException
-     * @throws \Drupal\commerce\Response\NeedsRedirectException
-     * @throws \Exception
+     * @throws InvalidPluginDefinitionException
+     * @throws EntityStorageException
+     * @throws NeedsRedirectException
+     * @throws Exception
      */
     public function buildConfigurationForm(array $form, FormStateInterface $form_state)
     {
         try {
             $form = parent::buildConfigurationForm($form, $form_state);
 
-            /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
+            /** @var PaymentInterface $payment */
             $payment = $this->entity;
-            /** @var YandexCheckout $paymentGatewayPlugin */
+            /** @var YooKassa $paymentGatewayPlugin */
             $paymentGatewayPlugin = $payment->getPaymentGateway()->getPlugin();
             $client               = $paymentGatewayPlugin->apiClient;
             $order                = $payment->getOrder();
@@ -51,12 +56,11 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
                     'returnUrl' => $form['#return_url'],
                 ))
                 ->setMetadata(array(
-                    'cms_name'       => 'ya_api_drupal8',
-                    'module_version' => YandexCheckout::YAMONEY_MODULE_VERSION,
+                    'cms_name'       => 'yoo_api_drupal8',
+                    'module_version' => YooKassa::YOOMONEY_MODULE_VERSION,
                 ));
 
             if ($config['receipt_enabled'] == 1) {
-                /** @var UserInterface $profile */
                 $profile = $order->getCustomer();
                 $builder->setReceiptEmail($profile->getEmail());
                 $items = $order->getItems();
@@ -76,8 +80,8 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
                             $percentage = $adjustment->getPercentage();
                         }
                     }
-                    if (in_array($taxUuid, array_keys($config['yandex_checkout_tax']))) {
-                        $vat_code = $config['yandex_checkout_tax'][$taxUuid];
+                    if (in_array($taxUuid, array_keys($config['yookassa_tax']))) {
+                        $vat_code = $config['yookassa_tax'][$taxUuid];
                     } else {
                         $vat_code = $config['default_tax'];
                     }
@@ -92,7 +96,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
             }
             $response = $client->createPayment($paymentRequest);
 
-            $payment_storage = \Drupal::entityTypeManager()->getStorage('commerce_payment');
+            $payment_storage = Drupal::entityTypeManager()->getStorage('commerce_payment');
             $payments        = $payment_storage->loadByProperties(['order_id' => $order->id()]);
             if ($payments) {
                 $payment = reset($payments);
@@ -110,7 +114,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm
 
             return $this->buildRedirectForm($form, $form_state, $redirect_url, $data);
         } catch (ApiException $e) {
-            \Drupal::logger('yandex_checkout')->error('Api error: ' . $e->getMessage());
+            Drupal::logger('yookassa')->error('Api error: ' . $e->getMessage());
             drupal_set_message(t('Не удалось создать платеж.'), 'error');
             throw new PaymentGatewayException();
         }

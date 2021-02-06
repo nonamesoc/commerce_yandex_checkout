@@ -1,19 +1,21 @@
 <?php
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
 
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
+
+use Drupal\commerce_payment\Annotation\CommercePaymentMethodType;
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
  * Provides the PayPal payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_bankcard",
+ *   id = "yookassa_wallet",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutBankCard extends YandexCheckoutPaymentMethod
+class YooKassaWallet extends YooKassaPaymentMethod
 {
 
     /**
@@ -24,7 +26,7 @@ class YandexCheckoutBankCard extends YandexCheckoutPaymentMethod
      */
     public function getLabel()
     {
-        return 'Банковские карты — Visa, Mastercard и Maestro, «Мир»';
+        return 'ЮMoney';
     }
 
     /**
