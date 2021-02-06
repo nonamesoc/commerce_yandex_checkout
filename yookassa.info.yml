@@ -4,7 +4,7 @@ package: YooKassa
 type: module
 version: 2.0.1
 project: Commerce (contrib)
-core: 8.x
+core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - commerce:commerce_payment
   - commerce:commerce_tax
