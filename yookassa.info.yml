@@ -3,7 +3,6 @@ description: YooKassa Module description
 package: YooKassa
 type: module
 version: 1.0.2
-project: Commerce (contrib)
 core_version_requirement: ^8.7.7 || ^9
 dependencies:
   - commerce:commerce_payment
