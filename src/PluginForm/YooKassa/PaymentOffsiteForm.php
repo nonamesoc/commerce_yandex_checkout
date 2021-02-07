@@ -51,7 +51,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
         ])
         ->setMetadata([
           'cms_name' => 'ya_api_drupal8',
-          'module_version' => YooKassa::YAMONEY_MODULE_VERSION,
+          'module_version' => YooKassa::YOOMONEY_MODULE_VERSION,
         ]);
 
       if ($config['receipt_enabled'] == 1) {
