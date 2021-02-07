@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\Tests\yandex_checkout\FunctionalJavascript;
+namespace Drupal\Tests\yookassa\FunctionalJavascript;
 
 /**
- * Tests the admin UI for yandex_checkout_billing payment gateway.
+ * Tests the admin UI for yookassa_billing payment gateway.
  *
- * @group commerce_yandex_checkout
+ * @group commerce_yookassa
  */
-class YandexCheckoutBillingPaymentGatewayTest extends PaymentGatewayTestBase {
+class YooKassaBillingPaymentGatewayTest extends PaymentGatewayTestBase {
 
   /**
    * {@inheritdoc}
    */
-  protected $pluginId = 'yandex_checkout_billing';
+  protected $pluginId = 'yookassa_billing';
 
   /**
    * {@inheritdoc}
@@ -20,7 +20,7 @@ class YandexCheckoutBillingPaymentGatewayTest extends PaymentGatewayTestBase {
   protected function getPluginConfiguration() {
     return [
       'billing_id' => $this->randomGenerator->string(),
-      'display_label' => 'Yandex Checkout Billing',
+      'display_label' => 'YooKassa Billing',
       'narrative' => 'Order #[commerce_order:order_id]',
     ];
   }

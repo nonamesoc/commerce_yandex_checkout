@@ -1,21 +1,13 @@
 <?php
-
-/**
- * @file
- * Provides module installation functions.
- * @todo: ignore this phpcs rule.
- */
-
 /**
  * Implements hook_requirements().
  */
-function yandex_checkout_requirements($phase) {
+function yookassa_requirements($phase) {
   $requirements = [];
-
-  if ($phase === 'install') {
-    if (!class_exists('\YandexCheckout\Client')) {
-      $requirements['yandex_checkout_sdk_library'] = [
-        'description' => t('Yandex Checkout requires the yandex-money/yandex-checkout-sdk-php library.'),
+  if ($phase == 'install' ) {
+    if (!class_exists('\YooKassa\Client')) {
+      $requirements['yookassa_sdk_library'] = [
+        'description' => t('YooMoney for business requires the yoomoney/yookassa-sdk-php library.'),
         'severity' => REQUIREMENT_ERROR,
       ];
     }
@@ -27,14 +19,14 @@ function yandex_checkout_requirements($phase) {
 /**
  * Updates placeholders in payments descriptions.
  */
-function yandex_checkout_update_8001() {
+function yookassa_update_8001() {
   $gateways = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')
-    ->loadByProperties(['plugin' => ['yandex_checkout', 'yandex_checkout_billing']]);
+    ->loadByProperties(['plugin' => ['yookassa', 'yookassa_billing']]);
 
   /** @var \Drupal\commerce_payment\Entity\PaymentGatewayInterface $gateway */
   foreach ($gateways as $gateway) {
     $plugin_id = $gateway->getPluginId();
-    $field_to_update = $plugin_id === 'yandex_checkout' ? 'description_template' : 'narrative';
+    $field_to_update = $plugin_id === 'yookassa' ? 'description_template' : 'narrative';
     $configuration = $gateway->getPluginConfiguration();
     $string_to_replace = $configuration[$field_to_update] ?? NULL;
     if (empty($string_to_replace)) {

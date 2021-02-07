@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\yandex_checkout\FunctionalJavascript;
+namespace Drupal\Tests\yookassa\FunctionalJavascript;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Tests\commerce\FunctionalJavascript\CommerceWebDriverTestBase;
@@ -29,7 +29,7 @@ abstract class PaymentGatewayTestBase extends CommerceWebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['yandex_checkout'];
+  public static $modules = ['yookassa'];
 
   /**
    * {@inheritdoc}

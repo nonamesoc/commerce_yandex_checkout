@@ -1,16 +1,16 @@
 <?php
 
-namespace Drupal\yandex_checkout\PluginForm\YandexCheckout;
+namespace Drupal\yookassa\PluginForm\YooKassa;
 
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\commerce_payment\PluginForm\PaymentOffsiteForm as BasePaymentOffsiteForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout;
-use YandexCheckout\Common\Exceptions\ApiException;
-use YandexCheckout\Model\ConfirmationType;
-use YandexCheckout\Model\Payment as PaymentModel;
-use YandexCheckout\Request\Payments\CreatePaymentRequest;
+use Drupal\yookassa\Plugin\Commerce\PaymentGateway\YooKassa;
+use YooKassa\Common\Exceptions\ApiException;
+use YooKassa\Model\ConfirmationType;
+use YooKassa\Model\Payment as PaymentModel;
+use YooKassa\Request\Payments\CreatePaymentRequest;
 
 /**
  * Offsite payment form.
@@ -34,7 +34,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
 
       /** @var \Drupal\commerce_payment\Entity\PaymentInterface $payment */
       $payment = $this->entity;
-      /** @var \Drupal\yandex_checkout\Plugin\Commerce\PaymentGateway\YandexCheckout $paymentGatewayPlugin */
+      /** @var \Drupal\yookassa\Plugin\Commerce\PaymentGateway\YooKassa $paymentGatewayPlugin */
       $paymentGatewayPlugin = $payment->getPaymentGateway()->getPlugin();
       $client = $paymentGatewayPlugin->apiClient;
       $order = $payment->getOrder();
@@ -51,7 +51,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
         ])
         ->setMetadata([
           'cms_name' => 'ya_api_drupal8',
-          'module_version' => YandexCheckout::YAMONEY_MODULE_VERSION,
+          'module_version' => YooKassa::YAMONEY_MODULE_VERSION,
         ]);
 
       if ($config['receipt_enabled'] == 1) {
@@ -74,8 +74,8 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
               $percentage = $adjustment->getPercentage();
             }
           }
-          if (in_array($taxUuid, array_keys($config['yandex_checkout_tax']))) {
-            $vat_code = $config['yandex_checkout_tax'][$taxUuid];
+          if (in_array($taxUuid, array_keys($config['yookassa_tax']))) {
+            $vat_code = $config['yookassa_tax'][$taxUuid];
           }
           else {
             $vat_code = $config['default_tax'];
@@ -111,7 +111,7 @@ class PaymentOffsiteForm extends BasePaymentOffsiteForm {
     }
     catch (ApiException $exception) {
       $message = $exception->getMessage();
-      \Drupal::logger('yandex_checkout')->error('API Error: ' . $message);
+      \Drupal::logger('yookassa')->error('API Error: ' . $message);
       \Drupal::messenger()->addError($this->t('Не удалось создать платеж.'));
       throw new PaymentGatewayException();
     }

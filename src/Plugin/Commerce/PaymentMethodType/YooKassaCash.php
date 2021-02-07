@@ -1,25 +1,25 @@
 <?php
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the yandex_checkout_billing payment method type.
+ * Provides the yookassa_cash payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_billing",
+ *   id = "yookassa_cash",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutBilling extends YandexCheckoutPaymentMethod {
+class YooKassaCash extends YooKassaPaymentMethod {
 
   /**
    * {@inheritdoc}
    */
   public function getLabel() {
-    return $this->t('Yandex.Billing (bank card, e-wallets)');
+    return $this->t('Наличные');
   }
 
   /**

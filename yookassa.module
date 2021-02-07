@@ -9,7 +9,7 @@
 /**
  * Implements hook_theme().
  */
-function yandex_checkout_theme() {
+function yookassa_theme() {
   return [
     'payment_description_template_help' => [
       'variables' => [

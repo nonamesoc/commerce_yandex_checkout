@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the yandex_checkout_bankcard payment method type.
+ * Provides the yookassa_bankcard payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_bankcard",
+ *   id = "yookassa_bankcard",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutBankCard extends YandexCheckoutPaymentMethod {
+class YooKassaBankCard extends YooKassaPaymentMethod {
 
   /**
    * {@inheritdoc}

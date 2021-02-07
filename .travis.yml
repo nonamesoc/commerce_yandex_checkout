@@ -56,16 +56,16 @@ install:
   - git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git $DRUPAL_BUILD_DIR
 
   # Reference the module in the build site.
-  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout
+  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yookassa
 
   # Copy the customized phpunit configuration file to the core directory so
   # the relative paths are correct.
-  - cp $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout/phpunit.xml.dist $DRUPAL_BUILD_DIR/core/phpunit.xml
+  - cp $DRUPAL_BUILD_DIR/modules/commerce_yookassa/phpunit.xml.dist $DRUPAL_BUILD_DIR/core/phpunit.xml
 
   # Bring in the module dependencies without requiring a merge plugin. The
   # require also triggers a full 'composer install'.
   - composer --working-dir=$DRUPAL_BUILD_DIR require drupal/commerce:^2.14
-  - composer --working-dir=$DRUPAL_BUILD_DIR require yandex-money/yandex-checkout-sdk-php:^1.5
+  - composer --working-dir=$DRUPAL_BUILD_DIR require yoomoney/yookassa-sdk-php:^2.0
 
   # For Drupal < 8.8 we have to manually upgrade zend-stdlib to avoid PHP 7.3
   # incompatibilities.

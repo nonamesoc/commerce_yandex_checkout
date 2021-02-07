@@ -1,7 +1,0 @@
-billing_validation:
-  version: 1.x
-  js:
-    js/billing_validation.js: {}
-  dependencies:
-    - core/jquery
-    - core/jquery.once

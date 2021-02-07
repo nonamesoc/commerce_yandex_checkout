@@ -1,25 +1,25 @@
 <?php
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the yandex_checkout_webmoney payment method type.
+ * Provides the yookassa_sberbank payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_webmoney",
+ *   id = "yookassa_sberbank",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutWebmoney extends YandexCheckoutPaymentMethod {
+class YooKassaSberbank extends YooKassaPaymentMethod {
 
   /**
    * {@inheritdoc}
    */
   public function getLabel() {
-    return $this->t('Webmoney');
+    return $this->t('Сбербанк Онлайн');
   }
 
   /**

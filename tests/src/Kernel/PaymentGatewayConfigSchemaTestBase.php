@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\yandex_checkout\Kernel;
+namespace Drupal\Tests\yookassa\Kernel;
 
 use Drupal\Tests\SchemaCheckTestTrait;
 use Drupal\KernelTests\KernelTestBase;
@@ -22,7 +22,7 @@ abstract class PaymentGatewayConfigSchemaTestBase extends KernelTestBase {
     'commerce_price',
     'commerce_order',
     'commerce_payment',
-    'yandex_checkout',
+    'yookassa',
   ];
 
   /**

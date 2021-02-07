@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\yandex_checkout\Plugin\Commerce\PaymentMethodType;
+namespace Drupal\yookassa\Plugin\Commerce\PaymentMethodType;
 
 use Drupal\commerce_payment\Entity\PaymentMethodInterface;
 
 /**
- * Provides the yandex_checkout_qiwi payment method type.
+ * Provides the yookassa_qiwi payment method type.
  *
  * @CommercePaymentMethodType(
- *   id = "yandex_checkout_qiwi",
+ *   id = "yookassa_qiwi",
  *   label = @Translation("YC account"),
  *   create_label = @Translation("YC account"),
  * )
  */
-class YandexCheckoutQiwi extends YandexCheckoutPaymentMethod {
+class YooKassaQiwi extends YooKassaPaymentMethod {
 
   /**
    * {@inheritdoc}
