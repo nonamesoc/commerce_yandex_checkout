@@ -1,8 +1,8 @@
 {
-    "name": "drupal/commerce_yookassa",
+    "name": "drupal/commerce_yandex_checkout",
     "type": "drupal-module",
     "description": "Provides Commerce integration for YooKassa.",
-    "homepage": "https://github.com/davpsh/commerce_yandex_checkout",
+    "homepage": "https://github.com/nonamesoc/commerce_yandex_checkout",
     "require": {
         "drupal/commerce": "^2.14",
         "yoomoney/yookassa-sdk-php": "^2.0"
