@@ -5,7 +5,7 @@ namespace Drupal\Tests\yookassa\FunctionalJavascript;
 /**
  * Tests the admin UI for yookassa_billing payment gateway.
  *
- * @group commerce_yookassa
+ * @group commerce_yandex_checkout
  */
 class YooKassaBillingPaymentGatewayTest extends PaymentGatewayTestBase {
 

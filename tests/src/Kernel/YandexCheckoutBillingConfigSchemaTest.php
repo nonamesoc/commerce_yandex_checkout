@@ -5,7 +5,7 @@ namespace Drupal\Tests\yookassa\Kernel;
 /**
  * Tests the yookassa_billing config schema.
  *
- * @group commerce_yookassa
+ * @group commerce_yandex_checkout
  */
 class YooKassaBillingConfigSchemaTest extends PaymentGatewayConfigSchemaTestBase {
 

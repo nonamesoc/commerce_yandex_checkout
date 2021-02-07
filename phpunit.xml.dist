@@ -13,10 +13,10 @@
   </php>
   <filter>
     <whitelist>
-      <directory suffix=".php">../modules/commerce_yookassa</directory>
+      <directory suffix=".php">../modules/commerce_yandex_checkout</directory>
       <exclude>
-        <directory suffix="Test.php">../modules/commerce_yookassa</directory>
-        <directory suffix="TestBase.php">../modules/commerce_yookassa</directory>
+        <directory suffix="Test.php">../modules/commerce_yandex_checkout</directory>
+        <directory suffix="TestBase.php">../modules/commerce_yandex_checkout</directory>
       </exclude>
     </whitelist>
   </filter>

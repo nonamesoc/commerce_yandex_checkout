@@ -56,11 +56,11 @@ install:
   - git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git $DRUPAL_BUILD_DIR
 
   # Reference the module in the build site.
-  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yookassa
+  - ln -s $TRAVIS_BUILD_DIR $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout
 
   # Copy the customized phpunit configuration file to the core directory so
   # the relative paths are correct.
-  - cp $DRUPAL_BUILD_DIR/modules/commerce_yookassa/phpunit.xml.dist $DRUPAL_BUILD_DIR/core/phpunit.xml
+  - cp $DRUPAL_BUILD_DIR/modules/commerce_yandex_checkout/phpunit.xml.dist $DRUPAL_BUILD_DIR/core/phpunit.xml
 
   # Bring in the module dependencies without requiring a merge plugin. The
   # require also triggers a full 'composer install'.
